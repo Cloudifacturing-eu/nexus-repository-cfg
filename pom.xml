@@ -30,15 +30,33 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
+            <groupId>org.sonatype.nexus</groupId>
+            <artifactId>nexus-rapture</artifactId>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>se.sawano.java</groupId>
-            <artifactId>alphanumeric-comparator</artifactId>
-            <version>1.4.1</version>
+            <groupId>org.sonatype.nexus.plugins</groupId>
+            <artifactId>nexus-repository-httpbridge</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sonatype.nexus</groupId>
+            <artifactId>nexus-security</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sonatype.nexus</groupId>
+            <artifactId>nexus-siesta</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -54,16 +72,17 @@
         </dependency>
 
         <dependency>
-            <groupId>org.sonatype.nexus</groupId>
-            <artifactId>nexus-rapture</artifactId>
-            <scope>provided</scope>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.4.0</version>
         </dependency>
 
         <dependency>
-            <groupId>org.sonatype.nexus.plugins</groupId>
-            <artifactId>nexus-repository-httpbridge</artifactId>
-            <scope>provided</scope>
+            <groupId>com.auth0</groupId>
+            <artifactId>jwks-rsa</artifactId>
+            <version>0.6.0</version>
         </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -97,7 +116,7 @@
                 <configuration>
                     <instructions>
                         <Embed-Dependency>
-                            snakeyaml
+                            java-jwt,jwks-rsa
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
