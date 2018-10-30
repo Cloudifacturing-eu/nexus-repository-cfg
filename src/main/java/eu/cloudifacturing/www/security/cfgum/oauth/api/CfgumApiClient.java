@@ -77,6 +77,8 @@ public class CfgumApiClient {
             authPrincipal.setUsername(jwt.getClaims().get("preferred_username").asString());
             if(jwt.getClaim("resource_access").asMap().toString().contains("developer")){
                 roles.add("developer");
+            } else {
+                roles.add("user");
             }
             authPrincipal.setRoles(roles);
             Set<String> groups = Sets.newHashSet(jwt.getClaims().get("associatedgroup").asArray(String.class));
