@@ -50,6 +50,7 @@ public class CfgumTokenAuthenticationRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+        log.info(token.getClass().getName());
         if (!(token instanceof UsernamePasswordToken)) {
             throw new UnsupportedTokenException(String.format("Token of type %s  is not supported. A %s is required.",
             token.getClass().getName(), UsernamePasswordToken.class.getName()));
@@ -59,7 +60,11 @@ public class CfgumTokenAuthenticationRealm extends AuthorizingRealm {
         CfgumPrincipal authenticatedPrincipal;
         try {
             authenticatedPrincipal = cfgumApiClient.authz(t.getUsername(),t.getPassword());
-            log.info("Successfully authenticated {}",t.getUsername());
+            if(authenticatedPrincipal==null){
+                return null;
+            } else {
+                log.info("Successfully authenticated {}", t.getUsername());
+            }
         } catch (CfgumAuthenticationException e){
             log.warn("Failed authentication");
             log.debug("Failed authentication" + e);

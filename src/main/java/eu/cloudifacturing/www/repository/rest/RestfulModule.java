@@ -41,9 +41,13 @@ public class RestfulModule extends AbstractModule {
             protected void configureServlets() {
                 log.debug("Mount point: {}", MOUNT_POINT);
                 bind(SiestaServlet.class);
+                /* Change the default mount point of nexus restful api
+
                 serve(MOUNT_POINT + "/*").with(SiestaServlet.class, ImmutableMap.of(
                         "resteasy.servlet.mapping.prefix", MOUNT_POINT
                 ));
+
+                */
                 filter(MOUNT_POINT + "/*").through(SecurityFilter.class);
             }
         });
