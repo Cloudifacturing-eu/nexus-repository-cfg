@@ -10,12 +10,13 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.eclipse.sisu.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.nexus.security.authc.NexusApiKeyAuthenticationToken;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.stream.Collectors;
-
+import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 @Named
 @Description("CFGUM Token Authentication Realm")
@@ -24,6 +25,11 @@ public class CfgumTokenAuthenticationRealm extends AuthorizingRealm {
     private CfgumApiClient cfgumApiClient;
     private static final Logger log= LoggerFactory.getLogger(CfgumTokenAuthenticationRealm.class);
     public static final String NAME = CfgumTokenAuthenticationRealm.class.getName();
+
+    @Override
+    public boolean supports(final AuthenticationToken token) {
+        return token instanceof NexusApiKeyAuthenticationToken;
+    }
 
     @Inject
     public CfgumTokenAuthenticationRealm(CfgumApiClient cfgumApiClient){
@@ -50,20 +56,21 @@ public class CfgumTokenAuthenticationRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+        checkNotNull(token);
         log.info(token.getClass().getName());
-        if (!(token instanceof UsernamePasswordToken)) {
+        if (!(token instanceof  NexusApiKeyAuthenticationToken)) {
             throw new UnsupportedTokenException(String.format("Token of type %s  is not supported. A %s is required.",
-            token.getClass().getName(), UsernamePasswordToken.class.getName()));
+            token.getClass().getName(),  NexusApiKeyAuthenticationToken.class.getName()));
         }
-        UsernamePasswordToken t = (UsernamePasswordToken) token;
-        log.info("doGetAuthenticationInfo for {}", ((UsernamePasswordToken) token).getUsername());
+        NexusApiKeyAuthenticationToken t = (NexusApiKeyAuthenticationToken) token;
+        log.info("doGetAuthenticationInfo for {}", t.getPrincipal() + "." + t.getCredentials());
         CfgumPrincipal authenticatedPrincipal;
         try {
-            authenticatedPrincipal = cfgumApiClient.authz(t.getUsername(),t.getPassword());
+            authenticatedPrincipal = cfgumApiClient.doAuthz((char[]) t.getCredentials());
             if(authenticatedPrincipal==null){
                 return null;
             } else {
-                log.info("Successfully authenticated {}", t.getUsername());
+                log.info("Successfully authenticated {}", t.getCredentials());
             }
         } catch (CfgumAuthenticationException e){
             log.warn("Failed authentication");

@@ -48,22 +48,7 @@ public class CfgumApiClient {
                 .build();
     }
 
-    public CfgumPrincipal authz(String login, char[] token) throws CfgumAuthenticationException {
-        // Combine the login and the token as the cache key since they are both used to generate the principal. If either changes we should obtain a new
-        // principal.
-        String cacheKey = login + "|" + new String(token);
-        CfgumPrincipal cached = tokenToPrincipalCache.getIfPresent(cacheKey);
-        if (cached != null) {
-            log.debug("Using cached principal for login: {}", login);
-            return cached;
-        } else {
-            CfgumPrincipal principal = doAuthz(login, token);
-            tokenToPrincipalCache.put(cacheKey, principal);
-            return principal;
-        }
-    }
-
-    private CfgumPrincipal doAuthz(String loginName, char[] token) throws CfgumAuthenticationException {
+    public CfgumPrincipal doAuthz(char[] token) throws CfgumAuthenticationException {
         CfgumPrincipal authPrincipal = new CfgumPrincipal();
         Set<String> roles = new HashSet<>();
         try {
@@ -88,9 +73,13 @@ public class CfgumApiClient {
             return null;
         }
 
-        if(!loginName.equals(authPrincipal.getUsername())){
-            throw new CfgumAuthenticationException("Given username does not match CFGUM token Username!");
+        CfgumPrincipal cached = tokenToPrincipalCache.getIfPresent(authPrincipal.getUsername());
+        if (cached != null) {
+            log.debug("Using cached principal for login: {}", authPrincipal.getUsername());
+            return cached;
+        } else {
+            tokenToPrincipalCache.put(authPrincipal.getUsername(), authPrincipal);
+            return authPrincipal;
         }
-        return authPrincipal;
     }
 }
