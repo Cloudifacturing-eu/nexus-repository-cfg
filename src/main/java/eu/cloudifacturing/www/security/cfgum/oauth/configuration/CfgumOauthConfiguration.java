@@ -17,7 +17,7 @@ import java.util.Properties;
 public class CfgumOauthConfiguration {
     private static final String CONFIG_FILE = "cfgumoauth.properties";
 
-    private static final String DEFAULT_CFGUM_CERT_URL = "http://kc.cfg.cpc.uow/auth/realms/cfg/protocol/openid-connect/certs";
+    private static final String DEFAULT_CFGUM_CERT_URL = "https://api.emgora.eu/v1/emgum/server/auth/realms/cfg/protocol/openid-connect/certs";
 
     private static final String CFGUM_CERT_URL_KEY = "cfgum.cert.url";
 

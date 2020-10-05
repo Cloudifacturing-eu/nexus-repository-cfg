@@ -1,6 +1,10 @@
 package org.sonatype.repository.cfg.internal.hosted;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.sonatype.goodies.common.ComponentSupport;
+import org.sonatype.nexus.common.collect.AttributesMap;
 import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.http.HttpResponses;
 import org.sonatype.nexus.repository.view.*;
@@ -10,10 +14,13 @@ import javax.annotation.Nonnull;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import java.io.IOException;
+
 import static com.google.common.base.Preconditions.checkState;
 import static org.sonatype.nexus.repository.http.HttpMethods.*;
 import static org.sonatype.nexus.repository.http.HttpMethods.DELETE;
 import static org.sonatype.nexus.repository.http.HttpMethods.PUT;
+import static org.sonatype.repository.cfg.CfgUploadHandler.METADATA;
 
 @Named
 @Singleton
@@ -45,7 +52,7 @@ public class HostedHandlers
             case PUT: {
                 Payload content = context.getRequest().getPayload();
 
-                storage.put(name, context.getRequest().getAttributes(),content);
+                storage.put(name, context.getRequest().getAttributes(), content);
                 return HttpResponses.created();
             }
 

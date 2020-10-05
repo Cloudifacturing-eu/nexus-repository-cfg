@@ -53,17 +53,17 @@ public class CfgumApiClient {
         // principal.
         String cacheKey = login + "|" + new String(token);
         CfgumPrincipal cached = tokenToPrincipalCache.getIfPresent(cacheKey);
+        //log.info("Using cached principal for login: {}", login);
         if (cached != null) {
-            log.debug("Using cached principal for login: {}", login);
             return cached;
         } else {
-            CfgumPrincipal principal = doAuthz(login, token);
+            CfgumPrincipal principal = doAuthz(token);
             tokenToPrincipalCache.put(cacheKey, principal);
             return principal;
         }
     }
 
-    private CfgumPrincipal doAuthz(String loginName, char[] token) throws CfgumAuthenticationException {
+    private CfgumPrincipal doAuthz(char[] token){
         CfgumPrincipal authPrincipal = new CfgumPrincipal();
         Set<String> roles = new HashSet<>();
         try {
@@ -75,22 +75,26 @@ public class CfgumApiClient {
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT jwt = verifier.verify(new String(token));	// This operation generates a JWTVerificationException, if token is invalid.
             authPrincipal.setUsername(jwt.getClaims().get("preferred_username").asString());
-            if(jwt.getClaim("resource_access").asMap().toString().contains("developer")){
+            if(jwt.getClaim("realm_access").asMap().toString().contains("developer")){
                 roles.add("developer");
             } else {
                 roles.add("user");
             }
             authPrincipal.setRoles(roles);
-            Set<String> groups = Sets.newHashSet(jwt.getClaims().get("associatedgroup").asArray(String.class));
+            Set<String> groups = Sets.newHashSet();
+            if(jwt.getClaims().containsKey("associatedgroup")){
+                groups = Sets.newHashSet(jwt.getClaims().get("associatedgroup").asArray(String.class));
+            }
             authPrincipal.setGroups(groups);
+            log.info(authPrincipal.getUsername()+":"+authPrincipal.getGroups()+":"+authPrincipal.getRoles());
         }catch (JWTVerificationException | JwkException | MalformedURLException verExc) {
             log.warn(verExc.getMessage());
             return null;
         }
-
-        if(!loginName.equals(authPrincipal.getUsername())){
-            throw new CfgumAuthenticationException("Given username does not match CFGUM token Username!");
-        }
         return authPrincipal;
     }
+
+
+
+
 }

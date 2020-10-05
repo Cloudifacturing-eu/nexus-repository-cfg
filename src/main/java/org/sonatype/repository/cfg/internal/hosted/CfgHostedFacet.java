@@ -1,5 +1,6 @@
 package org.sonatype.repository.cfg.internal.hosted;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import org.sonatype.nexus.common.collect.AttributesMap;
 import org.sonatype.nexus.repository.Facet;
 import org.sonatype.nexus.repository.Facet.Exposed;

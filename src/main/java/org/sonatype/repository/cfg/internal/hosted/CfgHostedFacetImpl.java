@@ -88,23 +88,34 @@ public class CfgHostedFacetImpl extends FacetSupport
         asset.attributes().child(CfgFormat.NAME).set(ENGINE_ID,attributesMap.get(ENGINE_ID));
         asset.attributes().child(CfgFormat.NAME).set(PROJECT_ID,attributesMap.get(PROJECT_ID));
         asset.attributes().child(CfgFormat.NAME).set(VERSION,attributesMap.get(VERSION));
-        asset.attributes().child(CfgFormat.NAME).set(SERVICE_ID,attributesMap.get(SERVICE_ID));
-        asset.attributes().child(CfgFormat.NAME).set(SERVICE_URL,attributesMap.get(SERVICE_URL));
-        asset.attributes().child(CfgFormat.NAME).set(SERVICE_CONFIGURATION,attributesMap.get(SERVICE_CONFIGURATION));
-        asset.attributes().child(CfgFormat.NAME).set(SERVICE_CONFIGURATION_TYPE,attributesMap.get(SERVICE_CONFIGURATION_TYPE));
+
+        if(attributesMap.get(SERVICE_ID)!=null) {
+            asset.attributes().child(CfgFormat.NAME).set(SERVICE_ID, attributesMap.get(SERVICE_ID));
+        }
+        if(attributesMap.get(SERVICE_URL)!=null) {
+            asset.attributes().child(CfgFormat.NAME).set(SERVICE_URL, attributesMap.get(SERVICE_URL));
+        }
+        if(attributesMap.get(SERVICE_CONFIGURATION)!=null) {
+            asset.attributes().child(CfgFormat.NAME).set(SERVICE_CONFIGURATION, attributesMap.get(SERVICE_CONFIGURATION));
+        }
+        if(attributesMap.get(SERVICE_CONFIGURATION_TYPE)!=null) {
+        asset.attributes().child(CfgFormat.NAME).set(SERVICE_CONFIGURATION_TYPE, attributesMap.get(SERVICE_CONFIGURATION_TYPE));
+        }
 
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode metadata = mapper.readTree((String) attributesMap.get(METADATA));
-        if(metadata!=null) {
-            try {
-                Iterator<String> metadataKeys = metadata.fieldNames();
-                while (metadataKeys.hasNext()) {
-                    String key = metadataKeys.next();
-                    System.out.println(metadata.get(key).asText());
-                    asset.attributes().child(METADATA).set(key, metadata.get(key).asText());
+        if((attributesMap.get(METADATA))!=null) {
+            JsonNode metadata = mapper.readTree((String) attributesMap.get(METADATA));
+            if (metadata != null) {
+                try {
+                    Iterator<String> metadataKeys = metadata.fieldNames();
+                    while (metadataKeys.hasNext()) {
+                        String key = metadataKeys.next();
+                        System.out.println(metadata.get(key).asText());
+                        asset.attributes().child(METADATA).set(key, metadata.get(key).asText());
+                    }
+                } catch (Exception e) {
+                    log.warn(e.getMessage());
                 }
-            } catch (Exception e){
-                log.warn(e.getMessage());
             }
         }
 

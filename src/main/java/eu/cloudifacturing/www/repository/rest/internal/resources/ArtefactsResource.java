@@ -1,6 +1,7 @@
 package eu.cloudifacturing.www.repository.rest.internal.resources;
 
 
+import com.fasterxml.jackson.core.JsonParseException;
 import eu.cloudifacturing.www.repository.rest.api.ArtefactXO;
 import eu.cloudifacturing.www.repository.rest.api.MetadataXO;
 import eu.cloudifacturing.www.repository.rest.api.RepositoryItemIDXO;
@@ -21,6 +22,7 @@ import org.sonatype.nexus.repository.rest.ComponentUploadExtension;
 import org.sonatype.nexus.repository.storage.Asset;
 import org.sonatype.nexus.repository.storage.AssetEntityAdapter;
 import org.sonatype.nexus.repository.storage.AssetStore;
+import org.sonatype.nexus.repository.storage.ComponentEntityAdapter;
 import org.sonatype.nexus.repository.upload.ComponentUpload;
 import org.sonatype.nexus.repository.upload.UploadConfiguration;
 import org.sonatype.nexus.repository.upload.UploadManager;
@@ -164,7 +166,7 @@ public class ArtefactsResource extends ComponentSupport implements Resource, Art
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public void uploadArtefact(@QueryParam("repository") final String repositoryId, final MultipartInput multipartInput)
+    public  ArtefactXO uploadArtefact(@QueryParam("repository") final String repositoryId, final MultipartInput multipartInput)
             throws IOException {
         if (!uploadConfiguration.isEnabled()) {
             throw new WebApplicationException(NOT_FOUND);
@@ -184,11 +186,20 @@ public class ArtefactsResource extends ComponentSupport implements Resource, Art
             for (ComponentUploadExtension componentUploadExtension : componentsUploadExtensions) {
                 componentUploadExtension.apply(repository, componentUpload, uploadResponse.getComponentIds());
             }
+
+            if(uploadResponse.getComponentId()!=null) {
+                return ArtefactXO.fromAsset(browseService.browseComponentAssets(repository,uploadResponse.getComponentId().getValue()).getResults().get(0),repository);
+            } else {
+                return null;
+            }
         } catch (IllegalOperationException e) {
             throw new WebApplicationMessageException(Response.Status.BAD_REQUEST, e.getMessage());
         } catch (IllegalArgumentException e){
             log.warn(e.getCause()+":" + e.getMessage());
+        } catch (JsonParseException e){
+            throw new WebApplicationMessageException(Response.Status.BAD_REQUEST, "Invalid JSON string for 'cfg.metadata'."+e.getMessage());
         }
+        return null;
     }
 
     @GET

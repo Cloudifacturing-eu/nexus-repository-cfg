@@ -24,5 +24,5 @@ public class APIConstants
 
   public static final String CFGREPO_BETA_API_PREFIX = "/beta/cfgrepo";
 
-  public static final String CFGREPO_V1_API_PREFIX = "/v1/cfgrepo";
+  public static final String CFGREPO_V1_API_PREFIX = "";
 }

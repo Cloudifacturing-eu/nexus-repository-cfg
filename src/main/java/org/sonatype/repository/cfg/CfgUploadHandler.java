@@ -1,5 +1,8 @@
 package org.sonatype.repository.cfg;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import org.sonatype.nexus.common.collect.AttributesMap;
 import org.sonatype.nexus.repository.Repository;
@@ -98,12 +101,21 @@ public class CfgUploadHandler extends UploadHandlerSupport
         attributes.set(ENGINE_ID,upload.getFields().get(ENGINE_ID).trim());
         attributes.set(PROJECT_ID,upload.getFields().get(PROJECT_ID).trim());
         attributes.set(VERSION,upload.getFields().get(VERSION).trim());
-        attributes.set(SERVICE_ID,upload.getFields().get(SERVICE_ID).trim());
-        attributes.set(SERVICE_URL,upload.getFields().get(SERVICE_URL).trim());
-        attributes.set(SERVICE_CONFIGURATION,upload.getFields().get(SERVICE_CONFIGURATION).trim());
-        attributes.set(SERVICE_CONFIGURATION_TYPE,upload.getFields().get(SERVICE_CONFIGURATION_TYPE).trim());
-        attributes.set(METADATA,upload.getFields().get(METADATA).trim());
-
+        if(upload.getFields().get(SERVICE_ID)!=null) {
+            attributes.set(SERVICE_ID, upload.getFields().get(SERVICE_ID).trim());
+        }
+        if(upload.getFields().get(SERVICE_URL)!=null) {
+            attributes.set(SERVICE_URL, upload.getFields().get(SERVICE_URL).trim());
+        }
+        if(upload.getFields().get(SERVICE_CONFIGURATION)!=null) {
+            attributes.set(SERVICE_CONFIGURATION, upload.getFields().get(SERVICE_CONFIGURATION).trim());
+        }
+        if(upload.getFields().get(SERVICE_CONFIGURATION_TYPE)!=null) {
+            attributes.set(SERVICE_CONFIGURATION_TYPE, upload.getFields().get(SERVICE_CONFIGURATION_TYPE).trim());
+        }
+        if(upload.getFields().get(METADATA)!=null) {
+            attributes.set(METADATA, upload.getFields().get(METADATA).trim());
+        }
 
         return TransactionalStoreBlob.operation.withDb(repository.facet(StorageFacet.class).txSupplier())
                 .throwing(IOException.class).call(() -> {
@@ -155,11 +167,11 @@ public class CfgUploadHandler extends UploadHandlerSupport
                     new UploadFieldDefinition(ENGINE_ID, ENGINE_ID_HELP_TEXT, false, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
                     new UploadFieldDefinition(PROJECT_ID, PROJECT_ID_HELP_TEXT,false, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
                     new UploadFieldDefinition(VERSION, false, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
-                    new UploadFieldDefinition(SERVICE_ID, SERVICE_ID_HELP_TEXT,false, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
-                    new UploadFieldDefinition(SERVICE_URL,SERVICE_URL_HELP_TEXT,false,UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
-                    new UploadFieldDefinition(SERVICE_CONFIGURATION,SERVICE_CONFIGURATION_HELP_TEXT,false,UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
-                    new UploadFieldDefinition(SERVICE_CONFIGURATION_TYPE,SERVICE_CONFIGURATION_TYPE_HELP_TEXT,false,UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
-                    new UploadFieldDefinition(METADATA, true, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME));
+                    new UploadFieldDefinition(SERVICE_ID, SERVICE_ID_HELP_TEXT,true, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
+                    new UploadFieldDefinition(SERVICE_URL,SERVICE_URL_HELP_TEXT,true,UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
+                    new UploadFieldDefinition(SERVICE_CONFIGURATION,SERVICE_CONFIGURATION_HELP_TEXT,true,UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
+                    new UploadFieldDefinition(SERVICE_CONFIGURATION_TYPE,SERVICE_CONFIGURATION_TYPE_HELP_TEXT,true,UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
+                    new UploadFieldDefinition(METADATA, METADATA_HELP_TEXT, true, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME));
             List<UploadFieldDefinition> assetFields = Arrays.asList(
                     new UploadFieldDefinition(FILENAME, false, UploadFieldDefinition.Type.STRING));
 

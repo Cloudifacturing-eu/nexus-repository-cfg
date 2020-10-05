@@ -17,7 +17,7 @@ public interface ArtefactsResourceDoc {
             @ApiResponse(code = 403, message = "Insufficient permissions to upload an artefact"),
             @ApiResponse(code = 422, message = "Parameter 'repository' is required")
     })
-    void uploadArtefact(
+    ArtefactXO uploadArtefact(
             @ApiParam(value = "Name of the repository to which you would like to upload the artefact", required = true)
             final String repository,
             @ApiParam(hidden = false) @MultipartForm MultipartInput multipartInput)
