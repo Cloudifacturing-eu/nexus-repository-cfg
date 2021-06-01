@@ -46,6 +46,10 @@ public class CfgUploadHandler extends UploadHandlerSupport
 
     private static final String ENGINE_ID_HELP_TEXT = "The unique identification for the execution engine, e.g. cloudflow, cloudbroker, flowster";
 
+    public static final String GLOBAL_ID = "globalId";
+
+    private static final String GLOBAL_ID_HELP_TEXT = "The unique identification for the application";
+
     public static final String PROJECT_ID = "projectId";
 
     private static final String PROJECT_ID_HELP_TEXT = "the unique identification for the project";
@@ -99,6 +103,7 @@ public class CfgUploadHandler extends UploadHandlerSupport
         AttributesMap attributes = new AttributesMap();
         attributes.set(GROUP_ID,upload.getFields().get(GROUP_ID).trim());
         attributes.set(ENGINE_ID,upload.getFields().get(ENGINE_ID).trim());
+        attributes.set(GLOBAL_ID,upload.getFields().get(GLOBAL_ID).trim());
         attributes.set(PROJECT_ID,upload.getFields().get(PROJECT_ID).trim());
         attributes.set(VERSION,upload.getFields().get(VERSION).trim());
         if(upload.getFields().get(SERVICE_ID)!=null) {
@@ -165,6 +170,7 @@ public class CfgUploadHandler extends UploadHandlerSupport
             List<UploadFieldDefinition> componentFields = Arrays.asList(
                     new UploadFieldDefinition(GROUP_ID, GROUP_ID_HELP_TEXT, false, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
                     new UploadFieldDefinition(ENGINE_ID, ENGINE_ID_HELP_TEXT, false, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
+                    new UploadFieldDefinition(GLOBAL_ID, GLOBAL_ID_HELP_TEXT, false, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
                     new UploadFieldDefinition(PROJECT_ID, PROJECT_ID_HELP_TEXT,false, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
                     new UploadFieldDefinition(VERSION, false, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),
                     new UploadFieldDefinition(SERVICE_ID, SERVICE_ID_HELP_TEXT,true, UploadFieldDefinition.Type.STRING, FIELD_GROUP_NAME),

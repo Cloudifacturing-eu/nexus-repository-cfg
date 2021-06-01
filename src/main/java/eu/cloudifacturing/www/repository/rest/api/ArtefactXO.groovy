@@ -7,6 +7,7 @@ import groovy.transform.builder.Builder
 import org.sonatype.nexus.repository.Repository
 import eu.cloudifacturing.www.repository.rest.api.RepositoryItemIDXO
 import org.sonatype.nexus.repository.storage.Asset
+import org.joda.time.DateTime
 
 import static org.sonatype.nexus.common.entity.EntityHelper.id
 import static org.sonatype.nexus.repository.search.DefaultComponentMetadataProducer.ID
@@ -29,6 +30,8 @@ class ArtefactXO {
 
     String format
 
+    String timestamp
+
     Map checksum
 
     Map metadata
@@ -49,6 +52,7 @@ class ArtefactXO {
                 .format(repository.format.value)
                 .cfg(asset.attributes().child("cfg").backing())
                 .metadata(asset.attributes().child("metadata").backing())
+                .timestamp(asset.blobCreated().toString())
                 .build()
     }
 
@@ -66,6 +70,7 @@ class ArtefactXO {
                 .format(repository.format.value)
                 .cfg((Map) map.get("attributes",[:])["cfg"])
                 .metadata((Map) map.get("attributes",[:])["metadata"])
+                .timestamp((String) map.get("attributes",[:])["content"]["last_modified"])
                 .build()
     }
 }

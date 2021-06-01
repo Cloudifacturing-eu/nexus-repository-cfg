@@ -86,6 +86,7 @@ public class CfgHostedFacetImpl extends FacetSupport
 
         asset.attributes().child(CfgFormat.NAME).set(GROUP_ID,attributesMap.get(GROUP_ID));
         asset.attributes().child(CfgFormat.NAME).set(ENGINE_ID,attributesMap.get(ENGINE_ID));
+        asset.attributes().child(CfgFormat.NAME).set(GLOBAL_ID,attributesMap.get(GLOBAL_ID));
         asset.attributes().child(CfgFormat.NAME).set(PROJECT_ID,attributesMap.get(PROJECT_ID));
         asset.attributes().child(CfgFormat.NAME).set(VERSION,attributesMap.get(VERSION));
 
